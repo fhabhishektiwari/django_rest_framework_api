@@ -22,3 +22,16 @@ class StudentSerializers(serializers.ModelSerializer):
                         'error':"name can't be numeric"
                     })
         return data
+    
+
+class CategorySerializers(serializers.ModelSerializer):
+
+    class Meta:
+        model=Category
+        fields="__all__"
+
+class BookSerializers(serializers.ModelSerializer):
+    category=CategorySerializers()
+    class Meta:
+        model=Book
+        fields="__all__"

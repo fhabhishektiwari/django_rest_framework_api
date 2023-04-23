@@ -5,6 +5,17 @@ from .models import *
 from .serializers import *
 # Create your views here.
 
+
+@api_view(['GET'])
+def get_book(request):
+    book_obj=Book.objects.all()
+    serializer=BookSerializers(book_obj,many=True)
+    return Response({
+        'status':200,
+        'payload':serializer.data
+    })
+
+
 @api_view(['GET'])
 def home(request):
     student_objs=Student.objects.all()
