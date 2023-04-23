@@ -1,5 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from django.shortcuts import render
 from rest_framework.decorators import api_view
@@ -8,6 +9,7 @@ from .models import *
 from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken
 # Create your views here.
 
 
@@ -34,12 +36,16 @@ class RegisterUser(APIView):
         serializer.save()
         
         user=User.objects.get(username=serializer.data['username'])
-        token_obj,_= Token.objects.get_or_create(user=user)
+        # token_obj,_= Token.objects.get_or_create(user=user)
+
+        refresh = RefreshToken.for_user(user)
 
         return Response({
             'status': 200,
             'payload': serializer.data,
-            'token':str(token_obj),
+            # 'token':str(token_obj),
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
             'message': 'you sent'
         })
 
@@ -48,7 +54,8 @@ class RegisterUser(APIView):
 
 class StudentAPI(APIView):
 
-    authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
